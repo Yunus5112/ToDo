@@ -6,6 +6,7 @@ import * as listsApi from './lists';
 
 const queryKeys = {
   all: ['lists'] as const,
+  byId: (id: number) => ['lists', 'id', id] as const,
 };
 
 export function useLists() {
@@ -40,6 +41,14 @@ export function useLists() {
   });
 
   return { ...listsQuery, createList: createMutation.mutate, deleteList: deleteMutation.mutate };
+}
+
+export function useList(id: number) {
+  return useQuery({
+    queryKey: queryKeys.byId(id),
+    queryFn: () => listsApi.getListById(id),
+    enabled: Number.isFinite(id),
+  });
 }
 
 

@@ -1,6 +1,6 @@
 import { Link, Stack } from 'expo-router';
 import { useState } from 'react';
-import { ActivityIndicator, FlatList, RefreshControl, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, FlatList, RefreshControl, Text, TextInput, View, TouchableOpacity } from 'react-native';
 
 import { Button } from '@/components/Button';
 import { Container } from '@/components/Container';
@@ -52,10 +52,10 @@ export default function Home() {
               renderItem={({ item }) => (
                 <View className="flex-row items-center justify-between py-3">
                   <Link href={{ pathname: '/list/[id]', params: { id: String(item.id) } }} asChild>
-                    <View className="flex-1">
+                    <TouchableOpacity accessibilityRole="button" className="flex-1" activeOpacity={0.7}>
                       <Text className="text-lg font-semibold">{item.name}</Text>
                       <Text className="text-xs text-gray-500">Tap to view tasks</Text>
-                    </View>
+                    </TouchableOpacity>
                   </Link>
                   <Button title="Delete" onPress={() => deleteList(item.id)} />
                 </View>
