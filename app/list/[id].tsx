@@ -5,6 +5,7 @@ import { ActivityIndicator, FlatList, RefreshControl, Text, TextInput, View } fr
 import { Button } from '@/components/Button';
 import { Container } from '@/components/Container';
 import { useTasks } from '@/queries/tasks.hooks';
+import { taskCreateSchema } from '@/validation/schemas';
 
 export default function ListTasksScreen() {
   const { id } = useLocalSearchParams();
@@ -29,11 +30,10 @@ export default function ListTasksScreen() {
               title="Add"
               disabled={!name.trim()}
               onPress={() => {
-                const taskName = name.trim();
-                if (taskName) {
-                  createTask({ name: taskName, list_id: listId });
-                  setName('');
-                }
+                const parsed = taskCreateSchema.safeParse({ name, list_id: listId });
+                if (!parsed.success) return;
+                createTask(parsed.data);
+                setName('');
               }}
             />
           </View>

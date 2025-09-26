@@ -5,6 +5,7 @@ import { ActivityIndicator, FlatList, RefreshControl, Text, TextInput, View } fr
 import { Button } from '@/components/Button';
 import { Container } from '@/components/Container';
 import { useLists } from '@/queries/lists.hooks';
+import { listCreateSchema } from '@/validation/schemas';
 
 export default function Home() {
   const { data, isLoading, isError, refetch, createList, deleteList, isFetching } = useLists();
@@ -28,11 +29,12 @@ export default function Home() {
               title="Add"
               disabled={!newListName.trim()}
               onPress={() => {
-                const name = newListName.trim();
-                if (name) {
-                  createList(name);
-                  setNewListName('');
+                const parsed = listCreateSchema.safeParse({ name: newListName });
+                if (!parsed.success) {
+                  return;
                 }
+                createList(parsed.data.name);
+                setNewListName('');
               }}
             />
           </View>
