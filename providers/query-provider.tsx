@@ -1,18 +1,18 @@
 import { QueryClient, QueryClientProvider, onlineManager, focusManager } from '@tanstack/react-query';
 import * as React from 'react';
-import NetInfo from '@react-native-community/netinfo';
+import * as Network from 'expo-network';
 import { AppState, AppStateStatus } from 'react-native';
 
 interface QueryProviderProps {
   children: React.ReactNode;
 }
 
-// Configure onlineManager to use React Native NetInfo
+// Configure onlineManager using Expo Network (Expo Go friendly)
 onlineManager.setEventListener(setOnline => {
-  const unsubscribe = NetInfo.addEventListener(state => {
+  const subscription = Network.addNetworkStateListener(state => {
     setOnline(!!state.isConnected);
   });
-  return unsubscribe;
+  return () => subscription.remove();
 });
 
 // Configure focusManager to refetch on app foreground
