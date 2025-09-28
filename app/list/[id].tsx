@@ -34,7 +34,7 @@ export default function ListTasksScreen() {
               onPress={() => {
                 const parsed = taskCreateSchema.safeParse({ name, list_id: listId });
                 if (!parsed.success) return;
-                createTask(parsed.data);
+                createTask({ ...parsed.data, description: null, image: null, status: null, priority: null, is_completed: false, due_date: null });
                 setName('');
               }}
             />
@@ -59,7 +59,11 @@ export default function ListTasksScreen() {
                     ) : null}
                   </View>
                   <View className="flex-row gap-2">
-                    <Button title={item.is_completed ? 'Undo' : 'Done'} onPress={() => toggleTask({ id: item.id, isCompleted: !item.is_completed })} />
+                    <Button 
+                      title={item.is_completed ? 'Undo' : 'Done'} 
+                      onPress={() => toggleTask({ id: item.id, isCompleted: !item.is_completed })}
+                      className={item.is_completed ? '' : 'bg-green-500'}
+                    />
                     <Button title="Delete" onPress={() => deleteTask(item.id)} />
                   </View>
                 </View>
