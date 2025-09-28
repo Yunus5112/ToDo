@@ -35,11 +35,11 @@ This project showcases a production-ready task management application built for 
 ## 📱 Screenshots
 
 ### Lists Screen
-![Lists Screen](./assets/screenShots/list.jpeg)
+<img src="./assets/screenShots/list.jpeg" alt="Lists Screen" width="300" height="auto" />
 *Main screen showing all lists with create, edit, and delete functionality*
 
 ### Tasks Screen
-![Tasks Screen](./assets/screenShots/task.jpeg)
+<img src="./assets/screenShots/task.jpeg" alt="Tasks Screen" width="300" height="auto" />
 *Task management screen with completion toggle, edit, and delete options*
 
 ## 🏗️ Technical Architecture
