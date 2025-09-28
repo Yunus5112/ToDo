@@ -5,18 +5,35 @@ type ButtonProps = {
   title: string;
 } & TouchableOpacityProps;
 
-export const Button = forwardRef<View, ButtonProps>(({ title, ...touchableProps }, ref) => {
-  return (
-    <TouchableOpacity
-      ref={ref}
-      {...touchableProps}
-      className={`${styles.button} ${touchableProps.className}`}>
-      <Text className={styles.buttonText}>{title}</Text>
-    </TouchableOpacity>
-  );
-});
+export const Button = forwardRef<View, ButtonProps>(
+  ({ title, className, ...touchableProps }, ref) => {
+    return (
+      <TouchableOpacity
+        ref={ref}
+        {...touchableProps}
+        className={className || styles.button}>
+        <Text className={styles.buttonText}>{title}</Text>
+      </TouchableOpacity>
+    );
+  }
+);
 
 const styles = {
-  button: 'items-center bg-indigo-500 rounded-[28px] shadow-md p-4',
-  buttonText: 'text-white text-lg font-semibold text-center',
+  button: 'items-center bg-indigo-500 rounded-[12px] shadow-md px-4 py-3',
+  buttonText: 'text-white text-base font-semibold text-center',
+};
+
+// Helper function to get button styles based on variant
+export const getButtonStyles = (variant?: 'primary' | 'success' | 'danger') => {
+  const baseStyles = 'items-center rounded-[12px] shadow-md px-4 py-3';
+
+  switch (variant) {
+    case 'success':
+      return `${baseStyles} bg-green-500`;
+    case 'danger':
+      return `${baseStyles} bg-red-500`;
+    case 'primary':
+    default:
+      return `${baseStyles} bg-indigo-500`;
+  }
 };

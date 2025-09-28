@@ -23,6 +23,12 @@ export function useLists() {
     onError: () => Alert.alert('List could not be created'),
   });
 
+  const updateMutation = useMutation({
+    mutationFn: ({ id, name }: { id: number; name: string }) => listsApi.updateList(id, name),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.all }),
+    onError: () => Alert.alert('List could not be updated'),
+  });
+
   const deleteMutation = useMutation({
     mutationFn: (id: number) => listsApi.deleteList(id),
     onMutate: async (id: number) => {
@@ -40,7 +46,7 @@ export function useLists() {
     onSettled: () => queryClient.invalidateQueries({ queryKey: queryKeys.all }),
   });
 
-  return { ...listsQuery, createList: createMutation.mutate, deleteList: deleteMutation.mutate };
+  return { ...listsQuery, createList: createMutation.mutate, updateList: updateMutation.mutate, deleteList: deleteMutation.mutate };
 }
 
 export function useList(id: number) {

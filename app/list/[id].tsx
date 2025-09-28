@@ -1,6 +1,6 @@
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { ActivityIndicator, FlatList, RefreshControl, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, FlatList, RefreshControl, Text, TextInput, View, Modal } from 'react-native';
 
 import { Button } from '@/components/Button';
 import { Container } from '@/components/Container';
@@ -11,10 +11,12 @@ import { taskCreateSchema } from '@/validation/schemas';
 export default function ListTasksScreen() {
   const { id } = useLocalSearchParams();
   const listId = useMemo(() => Number(id), [id]);
-  const { data, isLoading, isError, isFetching, refetch, createTask, toggleTask, deleteTask } = useTasks(listId);
+  const { data, isLoading, isError, isFetching, refetch, createTask, updateTask, toggleTask, deleteTask } = useTasks(listId);
   const { data: list } = useList(listId);
 
   const [name, setName] = useState('');
+  const [editingTask, setEditingTask] = useState<{ id: number; name: string } | null>(null);
+  const [editName, setEditName] = useState('');
 
   return (
     <>
@@ -62,15 +64,65 @@ export default function ListTasksScreen() {
                     <Button 
                       title={item.is_completed ? 'Undo' : 'Done'} 
                       onPress={() => toggleTask({ id: item.id, isCompleted: !item.is_completed })}
-                      className={item.is_completed ? '' : 'bg-green-500'}
+                      className={`rounded-[12px] px-4 py-3 ${item.is_completed ? 'bg-gray-500' : 'bg-green-500'}`}
                     />
-                    <Button title="Delete" onPress={() => deleteTask(item.id)} />
+                    <Button 
+                      title="Edit" 
+                      onPress={() => {
+                        setEditingTask({ id: item.id, name: item.name });
+                        setEditName(item.name);
+                      }}
+                      className="rounded-[12px] px-4 py-3 bg-blue-500"
+                    />
+                    <Button 
+                      title="Delete" 
+                      onPress={() => deleteTask(item.id)}
+                      className="rounded-[12px] px-4 py-3 bg-red-500"
+                    />
                   </View>
                 </View>
               )}
             />
           )}
         </View>
+
+        {/* Edit Task Modal */}
+        <Modal visible={!!editingTask} transparent animationType="fade">
+          <View className="flex-1 bg-black/50 items-center justify-center p-4">
+            <View className="bg-white rounded-[16px] p-6 w-full max-w-sm">
+              <Text className="text-xl font-bold mb-4">Edit Task</Text>
+              <TextInput
+                className="border border-gray-300 rounded-md p-3 mb-4"
+                placeholder="Task name"
+                value={editName}
+                onChangeText={setEditName}
+                autoCapitalize="sentences"
+                autoCorrect
+              />
+              <View className="flex-row gap-3">
+                <Button
+                  title="Cancel"
+                  onPress={() => {
+                    setEditingTask(null);
+                    setEditName('');
+                  }}
+                  className="flex-1 rounded-[12px] px-4 py-3 bg-gray-500"
+                />
+                <Button
+                  title="Save"
+                  onPress={() => {
+                    const parsed = taskCreateSchema.safeParse({ name: editName, list_id: listId });
+                    if (!parsed.success) return;
+                    updateTask({ id: editingTask!.id, data: { name: parsed.data.name } });
+                    setEditingTask(null);
+                    setEditName('');
+                  }}
+                  className="flex-1 rounded-[12px] px-4 py-3 bg-green-500"
+                />
+              </View>
+            </View>
+          </View>
+        </Modal>
       </Container>
     </>
   );
