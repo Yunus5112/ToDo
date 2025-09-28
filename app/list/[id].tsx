@@ -1,17 +1,35 @@
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { ActivityIndicator, FlatList, RefreshControl, Text, TextInput, View, Modal } from 'react-native';
+import {
+  ActivityIndicator,
+  FlatList,
+  RefreshControl,
+  Text,
+  TextInput,
+  View,
+  Modal,
+} from 'react-native';
 
 import { Button } from '@/components/Button';
 import { Container } from '@/components/Container';
-import { useTasks } from '@/queries/tasks.hooks';
 import { useList } from '@/queries/lists.hooks';
+import { useTasks } from '@/queries/tasks.hooks';
 import { taskCreateSchema } from '@/validation/schemas';
 
 export default function ListTasksScreen() {
   const { id } = useLocalSearchParams();
   const listId = useMemo(() => Number(id), [id]);
-  const { data, isLoading, isError, isFetching, refetch, createTask, updateTask, toggleTask, deleteTask } = useTasks(listId);
+  const {
+    data,
+    isLoading,
+    isError,
+    isFetching,
+    refetch,
+    createTask,
+    updateTask,
+    toggleTask,
+    deleteTask,
+  } = useTasks(listId);
   const { data: list } = useList(listId);
 
   const [name, setName] = useState('');
@@ -23,9 +41,9 @@ export default function ListTasksScreen() {
       <Stack.Screen options={{ title: list?.name ? `${list.name}` : `List #${listId}` }} />
       <Container>
         <View className="gap-3">
-          <View className="flex-row gap-2 items-center">
+          <View className="flex-row items-center gap-2">
             <TextInput
-              className="flex-1 border border-gray-300 rounded-md p-3"
+              className="flex-1 rounded-md border border-gray-300 p-3"
               placeholder="New task name"
               value={name}
               onChangeText={setName}
@@ -36,7 +54,15 @@ export default function ListTasksScreen() {
               onPress={() => {
                 const parsed = taskCreateSchema.safeParse({ name, list_id: listId });
                 if (!parsed.success) return;
-                createTask({ ...parsed.data, description: null, image: null, status: null, priority: null, is_completed: false, due_date: null });
+                createTask({
+                  ...parsed.data,
+                  description: null,
+                  image: null,
+                  status: null,
+                  priority: null,
+                  is_completed: false,
+                  due_date: null,
+                });
                 setName('');
               }}
             />
@@ -55,29 +81,34 @@ export default function ListTasksScreen() {
               renderItem={({ item }) => (
                 <View className="flex-row items-center justify-between py-3">
                   <View className="flex-1">
-                    <Text className={`text-lg font-semibold ${item.is_completed ? 'line-through text-gray-400' : ''}`}>{item.name}</Text>
+                    <Text
+                      className={`text-lg font-semibold ${item.is_completed ? 'text-gray-400 line-through' : ''}`}>
+                      {item.name}
+                    </Text>
                     {item.due_date ? (
-                      <Text className="text-xs text-gray-500">Due: {new Date(item.due_date).toLocaleString()}</Text>
+                      <Text className="text-xs text-gray-500">
+                        Due: {new Date(item.due_date).toLocaleString()}
+                      </Text>
                     ) : null}
                   </View>
                   <View className="flex-row gap-2">
-                    <Button 
-                      title={item.is_completed ? 'Undo' : 'Done'} 
+                    <Button
+                      title={item.is_completed ? 'Undo' : 'Done'}
                       onPress={() => toggleTask({ id: item.id, isCompleted: !item.is_completed })}
                       className={`rounded-[12px] px-4 py-3 ${item.is_completed ? 'bg-gray-500' : 'bg-green-500'}`}
                     />
-                    <Button 
-                      title="Edit" 
+                    <Button
+                      title="Edit"
                       onPress={() => {
                         setEditingTask({ id: item.id, name: item.name });
                         setEditName(item.name);
                       }}
-                      className="rounded-[12px] px-4 py-3 bg-blue-500"
+                      className="rounded-[12px] bg-blue-500 px-4 py-3"
                     />
-                    <Button 
-                      title="Delete" 
+                    <Button
+                      title="Delete"
                       onPress={() => deleteTask(item.id)}
-                      className="rounded-[12px] px-4 py-3 bg-red-500"
+                      className="rounded-[12px] bg-red-500 px-4 py-3"
                     />
                   </View>
                 </View>
@@ -88,11 +119,11 @@ export default function ListTasksScreen() {
 
         {/* Edit Task Modal */}
         <Modal visible={!!editingTask} transparent animationType="fade">
-          <View className="flex-1 bg-black/50 items-center justify-center p-4">
-            <View className="bg-white rounded-[16px] p-6 w-full max-w-sm">
-              <Text className="text-xl font-bold mb-4">Edit Task</Text>
+          <View className="flex-1 items-center justify-center bg-black/50 p-4">
+            <View className="w-full max-w-sm rounded-[16px] bg-white p-6">
+              <Text className="mb-4 text-xl font-bold">Edit Task</Text>
               <TextInput
-                className="border border-gray-300 rounded-md p-3 mb-4"
+                className="mb-4 rounded-md border border-gray-300 p-3"
                 placeholder="Task name"
                 value={editName}
                 onChangeText={setEditName}
@@ -106,7 +137,7 @@ export default function ListTasksScreen() {
                     setEditingTask(null);
                     setEditName('');
                   }}
-                  className="flex-1 rounded-[12px] px-4 py-3 bg-gray-500"
+                  className="flex-1 rounded-[12px] bg-gray-500 px-4 py-3"
                 />
                 <Button
                   title="Save"
@@ -117,7 +148,7 @@ export default function ListTasksScreen() {
                     setEditingTask(null);
                     setEditName('');
                   }}
-                  className="flex-1 rounded-[12px] px-4 py-3 bg-green-500"
+                  className="flex-1 rounded-[12px] bg-green-500 px-4 py-3"
                 />
               </View>
             </View>
@@ -127,5 +158,3 @@ export default function ListTasksScreen() {
     </>
   );
 }
-
-

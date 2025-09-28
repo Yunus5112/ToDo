@@ -1,6 +1,15 @@
 import { Link, Stack } from 'expo-router';
 import { useState } from 'react';
-import { ActivityIndicator, FlatList, RefreshControl, Text, TextInput, View, TouchableOpacity, Modal, Alert } from 'react-native';
+import {
+  ActivityIndicator,
+  FlatList,
+  RefreshControl,
+  Text,
+  TextInput,
+  View,
+  TouchableOpacity,
+  Modal,
+} from 'react-native';
 
 import { Button } from '@/components/Button';
 import { Container } from '@/components/Container';
@@ -8,7 +17,8 @@ import { useLists } from '@/queries/lists.hooks';
 import { listCreateSchema } from '@/validation/schemas';
 
 export default function Home() {
-  const { data, isLoading, isError, refetch, createList, updateList, deleteList, isFetching } = useLists();
+  const { data, isLoading, isError, refetch, createList, updateList, deleteList, isFetching } =
+    useLists();
   const [newListName, setNewListName] = useState('');
   const [editingList, setEditingList] = useState<{ id: number; name: string } | null>(null);
   const [editName, setEditName] = useState('');
@@ -18,9 +28,9 @@ export default function Home() {
       <Stack.Screen options={{ title: 'Lists' }} />
       <Container>
         <View className="gap-3">
-          <View className="flex-row gap-2 items-center">
+          <View className="flex-row items-center gap-2">
             <TextInput
-              className="flex-1 border border-gray-300 rounded-md p-3"
+              className="flex-1 rounded-md border border-gray-300 p-3"
               placeholder="New list name"
               value={newListName}
               onChangeText={setNewListName}
@@ -54,24 +64,27 @@ export default function Home() {
               renderItem={({ item }) => (
                 <View className="flex-row items-center justify-between py-3">
                   <Link href={{ pathname: '/list/[id]', params: { id: String(item.id) } }} asChild>
-                    <TouchableOpacity accessibilityRole="button" className="flex-1" activeOpacity={0.7}>
+                    <TouchableOpacity
+                      accessibilityRole="button"
+                      className="flex-1"
+                      activeOpacity={0.7}>
                       <Text className="text-lg font-semibold">{item.name}</Text>
                       <Text className="text-xs text-gray-500">Tap to view tasks</Text>
                     </TouchableOpacity>
                   </Link>
                   <View className="flex-row gap-2">
-                    <Button 
-                      title="Edit" 
+                    <Button
+                      title="Edit"
                       onPress={() => {
                         setEditingList({ id: item.id, name: item.name });
                         setEditName(item.name);
                       }}
-                      className="rounded-[12px] px-4 py-3 bg-blue-500"
+                      className="rounded-[12px] bg-blue-500 px-4 py-3"
                     />
-                    <Button 
-                      title="Delete" 
+                    <Button
+                      title="Delete"
                       onPress={() => deleteList(item.id)}
-                      className="rounded-[12px] px-4 py-3 bg-red-500"
+                      className="rounded-[12px] bg-red-500 px-4 py-3"
                     />
                   </View>
                 </View>
@@ -82,11 +95,11 @@ export default function Home() {
 
         {/* Edit Modal */}
         <Modal visible={!!editingList} transparent animationType="fade">
-          <View className="flex-1 bg-black/50 items-center justify-center p-4">
-            <View className="bg-white rounded-[16px] p-6 w-full max-w-sm">
-              <Text className="text-xl font-bold mb-4">Edit List</Text>
+          <View className="flex-1 items-center justify-center bg-black/50 p-4">
+            <View className="w-full max-w-sm rounded-[16px] bg-white p-6">
+              <Text className="mb-4 text-xl font-bold">Edit List</Text>
               <TextInput
-                className="border border-gray-300 rounded-md p-3 mb-4"
+                className="mb-4 rounded-md border border-gray-300 p-3"
                 placeholder="List name"
                 value={editName}
                 onChangeText={setEditName}
@@ -100,7 +113,7 @@ export default function Home() {
                     setEditingList(null);
                     setEditName('');
                   }}
-                  className="flex-1 rounded-[12px] px-4 py-3 bg-gray-500"
+                  className="flex-1 rounded-[12px] bg-gray-500 px-4 py-3"
                 />
                 <Button
                   title="Save"
@@ -111,7 +124,7 @@ export default function Home() {
                     setEditingList(null);
                     setEditName('');
                   }}
-                  className="flex-1 rounded-[12px] px-4 py-3 bg-green-500"
+                  className="flex-1 rounded-[12px] bg-green-500 px-4 py-3"
                 />
               </View>
             </View>
